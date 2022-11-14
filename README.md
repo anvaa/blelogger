@@ -1,4 +1,4 @@
-getb.py [-h] sitename runfor writejson writecsv
+getble.py [-h] sitename runfor writejson writecsv
 
     - sitename as string
     - runfor as float #runtime in minutes 0 = one year, 1.5 = 1min 30sec
