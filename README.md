@@ -12,8 +12,8 @@ Dataoutput ->   time, #datetime as ddmmyyhhmmss
                 rssi, #in db -0 = strong signal
                 name  #name of device if any
 
-Read this for more documentation:
-http://ianharvey.github.io/bluepy-doc/
+Read this for more documentation on bluepy: http://ianharvey.github.io/bluepy-doc/
 
 License
-This project uses code from the bluez project, which is available under the Version 2 of the GNU Public License. The Python files are released into the public domain by their author, Ian Harvey. https://github.com/IanHarvey/bluepy
+This project uses code from the bluez project, which is available under the Version 2 of the GNU Public License. 
+The Python files are released into the public domain by their author, Ian Harvey. https://github.com/IanHarvey/bluepy
