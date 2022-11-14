@@ -2,8 +2,8 @@ getble.py [-h] sitename runfor writejson writecsv
 
     - sitename as string
     - runfor as float #runtime in minutes 0 = one year, 1.5 = 1min 30sec
-    writejson as int 0=no 1=yes #write to .json file(s)
-    writecsv as int 0=no 1=yes #write to .csv file. Appends pr. run.
+    - writejson as int 0=no 1=yes #write to .json file(s)
+    - writecsv as int 0=no 1=yes #write to .csv file. Appends pr. run.
 
     ex: getb.py athome 2 0 1 #run for 2 minutes and write to athome_<timestamp>.csv
 
