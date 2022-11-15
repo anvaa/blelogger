@@ -12,6 +12,11 @@ Dataoutput ->   time, #datetime as ddmmyyhhmmss
                 rssi, #in db -0 = strong signal
                 name  #name of device if any
 
+Install:
+    - sudo apt-get install python3-pip libglib2.0-dev git
+    - sudo pip install bluepy
+    - git clone https://github.com/anvaa/BLElogger.git
+
 Read this for more documentation on bluepy: http://ianharvey.github.io/bluepy-doc/
 
 License
