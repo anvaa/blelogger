@@ -19,7 +19,7 @@ if args.runfor==0:
 count=0
 startTime = dtj.getTimeNow()
 endTime = dtj.runToTime(args.runfor) #0.16 = 10sec, 0.5 = 30sec, 1.0 = 1min ...
-filename = args.sitename + "_" + dtj.getNowFormated()
+filename = args.sitename + "_" + dtj.getNowShortFormated()
 
 print("Ctrl+c to exit")
 

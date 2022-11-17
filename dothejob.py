@@ -5,13 +5,17 @@ import json
 #Returns unformates datetime object
 def getTimeNow():
     return datetime.datetime.now()
+
+#Return formated datetime string
+def getNowShortFormated():
+    return datetime.datetime.today().strftime("%d%m%y%H%m%S")
     
 #Return formated datetime string
-def getNowFormated():
-    return datetime.datetime.today().strftime("%d%m%y%H%m%S")
+def getNowLongFormated():
+    return datetime.datetime.now().strftime("%d%m%y%H%m%s")
 
 def formatDateTime(formatThis):
-    return formatThis.strftime("%d.%m.%y %H:%m:%S")
+    return formatThis.strftime("%d.%m.%y %H:%m:%s")
 
 def runToTime(runfor=0.0):
     from datetime import timedelta
@@ -20,7 +24,6 @@ def runToTime(runfor=0.0):
         print("Running for " + str(runfor) + " minutes.")
     return newRunTotime
     
-
 #Format and write json/csv data from ble-scaning
 def writeData(devices, fname="", writejson=0, writecsv=0, jcount=0):
     
@@ -35,14 +38,13 @@ def writeData(devices, fname="", writejson=0, writecsv=0, jcount=0):
         for (adtype, desc, value) in dev.getScanData():
             if (desc == "Complete Local Name"):
                 name = str(value)
-            
+
         # add device addr, addType and rssi to devices_m
-        devices_m.append({'time': getNowFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
+        devices_m.append({'time': getNowLongFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
         
     print("Scan "+str(jcount)+": "+str(len(devices_m)) + " devices found")
     devices_m.sort(key=lambda x: x["rssi"], reverse=True) #Sort in signalstrength(db)
-    json_devices = json.dumps(devices_m)
-    
+    json_devices = json.dumps(devices_m) 
     
     if writejson > 0:
         with open(fname+"_"+str(jcount)+ ".json", "w") as outfile:
