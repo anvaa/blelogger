@@ -23,8 +23,8 @@ filename = args.sitename + "_" + dtj.getNowShortFormated()
 
 print("Ctrl+c to exit")
 
-if args.writejson == 1: print("Writing -> " + filename +"_n_.json")
-if args.writecsv == 1: print("Appending -> " + filename +".csv")
+if args.writejson == 1: print(f'Writing -> {filename}_n.json')
+if args.writecsv == 1: print(f'Appending -> {filename}.csv')
 
 while endTime > dtj.getTimeNow():
     count+=1

@@ -21,7 +21,7 @@ def runToTime(runfor=0.0):
     from datetime import timedelta
     if runfor > 0:
         newRunTotime = datetime.datetime.today() + timedelta(minutes=runfor)
-        print("Running for " + str(runfor) + " minutes.")
+        print("Running for ${runfor} minutes.")
     return newRunTotime
     
 #Format and write json/csv data from ble-scaning
@@ -56,5 +56,4 @@ def writeData(devices, fname="", writejson=0, writecsv=0, jcount=0):
         
         for dev in devices_m:
             csv_writer.writerow(dev.values())
-        #print("Outputfile: " + fname+".csv")
         
