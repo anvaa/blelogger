@@ -24,29 +24,28 @@ def runToTime(runfor=0.0):
         print(f"Running for {runfor} minutes.")
     return newRunTotime
 
-def checkJsonFileFolder(jname):
-    if checkFolderEx():
+def checkJsonFileFolder(jname, lname):
+    if checkFolderEx(lname):
       print(f'Writing -> {jname}_n.json')
     else:
       print("Not a folder!")  
 
-def checkCsvFileFolder(cname):          
-    if checkFolderEx():
+def checkCsvFileFolder(cname, lname):
+    if checkFolderEx(lname):
       print(f'Appending -> {cname}.csv') 
     else:
       print("Not a folder!")  
         
-def checkFolderEx():
-    p = os.getcwd()+"/logg/"  
+def checkFolderEx(lname):
+    p = f"{os.getcwd()}/logg/{lname}/"
     if not os.path.exists(p):
         os.mkdir(p)
         print(f"First time run: Made <logg> folder: {p}")
         return True
     else: return True
 
-#Format and write json/csv data from ble-scaning
-def writeData(devices, fname, writejson=0, writecsv=0, jcount=0):
-
+def writeData(devices, locname, fname, writejson=0, writecsv=0, jcount=0):
+    
     devices_m = []
 
     if len(devices) < 5: #4=Null
@@ -63,16 +62,15 @@ def writeData(devices, fname, writejson=0, writecsv=0, jcount=0):
         devices_m.append({'time': getNowSQLFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
 
     print(f"Scan {jcount}: {len(devices_m)} devices found.")
-    devices_m.sort(key=lambda x: x["rssi"], reverse=True) #Sort in signalstrength(db)
     json_devices = json.dumps(devices_m)
 
     if writejson > 0:
-        newjf = f"logg/{fname}_{jcount}.json"
+        newjf = f"logg/{locname}/{fname}_{jcount}.json"
         with open(newjf, "w") as outfile:
             outfile.write(json_devices)
 
     if writecsv > 0:
-        newcf = f"logg/{fname}.csv"
+        newcf = f"logg/{locname}/{fname}.csv"
         data_file = open(newcf, 'a')
         csv_writer = csv.writer(data_file)
 
