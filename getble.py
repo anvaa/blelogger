@@ -38,15 +38,15 @@ if args.c == None:
 count=0
 startTime = dtj.getTimeNow()
 endTime = dtj.runToTime(float(args.r)) #0.16 = 10sec, 0.5 = 30sec, 1.0 = 1min ...
-tmpFname = args.l + "_" + dtj.getNowShortFormated()
+tmpFname = f"{args.l}_{dtj.getNowShortFormated()}"
 
 print("Ctrl+c to exit")
 
-if args.j == '1': # if write to json selected, prepare for writing to json
-    dtj.checkJsonFileFolder(tmpFname)
+if args.j == '1':
+    dtj.checkJsonFileFolder(tmpFname, args.l)
 
 if args.c == '1':
-    dtj.checkCsvFileFolder(tmpFname)
+    dtj.checkCsvFileFolder(tmpFname, args.l)
 
 
 while endTime > dtj.getTimeNow():
@@ -55,7 +55,7 @@ while endTime > dtj.getTimeNow():
         scanner = Scanner()
         devices = scanner.scan(10, True) # Scan for 10 seconds, be passive
 
-        dtj.writeData(devices, tmpFname, int(args.j), int(args.c), count)
+        dtj.writeData(devices, args.l, tmpFname, int(args.j), int(args.c), count)
 
     except Exception as ex:
         print ( "Unexpected error in BLE Scanner: %s" % ex )
