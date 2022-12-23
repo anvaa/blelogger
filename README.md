@@ -1,26 +1,33 @@
+
 getble.py [-h] sitename runfor writejson writecsv
 
-    - locationName as string
-    - runForMin as float #runtime in minutes 0 = one year, 1.5 = 1min 30sec
-    - writeToJson as int 0=no 1=yes #write to .json file(s)
-    - writeToCsv as int 0=no 1=yes #write to .csv file. Appends pr. run.
-    - scanIntSec as int default=30
+usage: getble.py [-h] [-l] [-r] [-j] [-c] [-s] [-n] [-z]
 
-    ex: getble.py -l @home -r 2 -c 1 
-        #runs for 2 minutes and write to @home_<timestamp>.csv
+optional arguments:
+  -h, --help            show this help message and exit
+  -l, -locationName 
+  -r, -runForMinutes 
+  -j, -writeToJson 
+  -c, -writeToCsv 
+  -s, -scanIntervalInSeconds 
+  -n, -ChangeFileNameInMinutes 
+  -z, -RunZipOnLoggFiles
 
-Dataoutput ->   time, #datetime as ddmmyyhhmmss 
+    ex: getble.py -l home -r 2 -c 1 
+        #runs for 2 minutes and write to home_<timestamp>.csv
+
+Dataoutput ->   time, #datetime as yy-mm-dd hh:mm:ss (sqltime) 
                 addr, #c2:45:56:49:ef:78
                 rssi, #in db -0 = strong signal
                 name  #name of device if any
 
 Install:
-    - sudo apt-get install python3-pip libglib2.0-dev git
+    - sudo apt install python3-pip libglib2.0-dev git
     - sudo pip install bluepy
     - git clone https://github.com/anvaa/BLElogger.git
 
 Read this for more documentation on bluepy: http://ianharvey.github.io/bluepy-doc/
 
-License
+License:
 This project uses code from the bluez project, which is available under the Version 2 of the GNU Public License. 
 The Python files are released into the public domain by their author, Ian Harvey. https://github.com/IanHarvey/bluepy
