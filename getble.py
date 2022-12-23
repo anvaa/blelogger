@@ -1,65 +1,60 @@
-import time
+import time, datetime
+# import datetime
 import argparse
 from bluepy.btle import DefaultDelegate, Scanner
 import dothejob as dtj
+from runtimesettings import RunTimeSettings
+# import socket
+import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l','-locationName')
-parser.add_argument('-r','-runForMin')
+parser.add_argument('-r','-runForMinutes')
 parser.add_argument('-j','-writeToJson')
 parser.add_argument('-c','-writeToCsv')
-parser.add_argument('-s','-scanIntSec')
+parser.add_argument('-s','-scanIntervalInSeconds')
+parser.add_argument('-n','-ChangeFileNameInMinutes')
+parser.add_argument('-z','-RunZipOnLoggFiles')
 args = parser.parse_args()
 
-if args.l == None:
-    print('>> LocationName can`t be emty!')
-    exit()
-    
-if args.r != None:  
-  if float(args.r) == 0:
-    args.r = 525600
-    print(f">> RunForMin set to {args.r} minutes (One Year!)")
-else:
-  args.r = float(1.0)
-  print(f">> Runformin can`t be 0! Set to {args.r} minute.")
-    
-if args.s == None or args.s == 0:
-    args.s = 30
-    print(f">> Default: Scan interval set to {args.s} seconds.")
+print("Ctrl+c to exit")
+rts = RunTimeSettings()
+rts.LocationName = args.l
+rts.ScanInterval = args.s
+rts.RunForMinutes = args.r
+rts.WriteToJson = args.j
+rts.WriteToCsv = args.c
+rts.RunZipTime = args.z
+rts.ChangeFileNameTime = args.n
+rts.FileName = dtj.genFileName(rts.LocationName)
 
-if args.j == None: 
-    args.j = 0
-
-if args.c == None: 
-    args.c = 0    
-
-#print(f"-l {args.l}, -r {args.r}, -s {args.s}, -j {args.j}, -c {args.c}")
+# print(f"{rts.LocationName} {rts.FileName} {rts.ScanInterval} {rts.RunForMinutes} {rts.WriteToJson} {rts.WriteToCsv}")
 
 count=0
-startTime = dtj.getTimeNow()
-endTime = dtj.runToTime(float(args.r)) #0.16 = 10sec, 0.5 = 30sec, 1.0 = 1min ...
-tmpFname = f"{args.l}_{dtj.getNowShortFormated()}"
+endTime = dtj.runToTime(rts.RunForMinutes)
+dtj.checkFileAndFolder(rts.LocationName,rts.FileName,rts.WriteToJson,rts.WriteToCsv)
+dtj.writeRunScript(rts.LocationName,rts.RunForMinutes,rts.ScanInterval,rts.WriteToJson,rts.WriteToCsv,rts.CfntMin,rts.ZipTimeMinutes)
 
-print("Ctrl+c to exit")
-
-if args.j == '1':
-    dtj.checkJsonFileFolder(tmpFname, args.l)
-
-if args.c == '1':
-    dtj.checkCsvFileFolder(tmpFname, args.l)
-
-
-while endTime > dtj.getTimeNow():
+print(" ")
+while endTime > datetime.datetime.now():
     count+=1
     try:
         scanner = Scanner()
-        devices = scanner.scan(10, True) # Scan for 10 seconds, be passive
-
-        dtj.writeData(devices, args.l, tmpFname, int(args.j), int(args.c), count)
+        devices = scanner.scan(10, True)
+        
+        dtj.writeData(devices, rts.LocationName, rts.FileName, rts.WriteToJson, rts.WriteToCsv, count)
+        
+        if rts.ChangeFileNameTime < datetime.datetime.now():
+             rts.FileName = dtj.genFileName(rts.FileName)
+             rts.ChangeFileNameTime = args.n
+             
+        if rts.RunZipTime < datetime.datetime.now():
+            _ = subprocess.run([f"./logg/{rts.LocationName}/runzip.sh",""], shell=True)
+            rts.RunZipTime = args.z
+ 
 
     except Exception as ex:
         print ( "Unexpected error in BLE Scanner: %s" % ex )
         exit()
 
-    time.sleep(int(args.s)) # wait n seconds before next scan
-    
+    time.sleep(rts.ScanInterval) # Scaninterval
