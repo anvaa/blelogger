@@ -24,7 +24,7 @@ Dataoutput ->   time, #datetime as yy-mm-dd hh:mm:ss (sqltime)
 Install:
     - sudo apt install python3-pip libglib2.0-dev git
     - sudo pip install bluepy
-    - git clone https://github.com/anvaa/BLElogger.git
+    - git clone https://github.com/anvaa/blelogger.git
 
 Read this for more documentation on bluepy: http://ianharvey.github.io/bluepy-doc/
 
