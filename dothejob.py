@@ -72,8 +72,9 @@ def writeData(devices, locname, fname, writejson: int, writecsv: int, jcount: in
         for (adtype, desc, value) in dev.getScanData():
             if (desc == "Complete Local Name"):
                 name = str(value)
-
-        devices_m.append({'location': locname, 'time': getNowSQLFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
+                
+        devaddr = dev.addr.replace(':','')
+        devices_m.append({'location': locname, 'time': getNowSQLFormated(), 'addr': devaddr, 'rssi': dev.rssi, 'name': name})
 
     print(f"Scan {jcount}: {len(devices_m)} devices found {formatDateTime(datetime.datetime.now())}")
     json_devices = json.dumps(devices_m)
