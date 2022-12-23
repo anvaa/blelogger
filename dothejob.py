@@ -1,50 +1,65 @@
 import datetime
 import csv, json
 import os
+from os.path import exists
+from runtimesettings import RunTimeSettings
 
-#Returns unformates datetime object
-def getTimeNow():
-    return datetime.datetime.now()
+rts = RunTimeSettings()
 
-#Return formated datetime string 
 def getNowShortFormated():
-    return datetime.datetime.today().strftime("%d%m%y%H%m%S")
+    return datetime.datetime.now().strftime("%d%m%y_%H%M%S")
 
-#Return formated datetime string
 def getNowSQLFormated():
-    return datetime.datetime.now().strftime("%Y-%m-%d %H:%m:%S")
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 def formatDateTime(formatThis):
-    return formatThis.strftime("%Y.%m.%d %H:%m:%s")
+    return formatThis.strftime("%Y.%m.%d %H:%M:%S")
 
-def runToTime(runfor=0.0):
+def runToTime(runfor: float):
     from datetime import timedelta
-    if runfor > 0:
-        newRunTotime = datetime.datetime.today() + timedelta(minutes=runfor)
-        print(f"Running for {runfor} minutes.")
+    if runfor == 0 or runfor < 0:
+        runfor = 43200 # 30 days as default
+    newRunTotime = datetime.datetime.now() + timedelta(minutes=runfor)
+    print(f"Running for {runfor} minutes until {formatDateTime(newRunTotime)}.")
     return newRunTotime
 
-def checkJsonFileFolder(jname, lname):
-    if checkFolderEx(lname):
-      print(f'Writing -> {jname}_n.json')
-    else:
-      print("Not a folder!")  
+def genFileName(locName):
+    return  f"{locName}_{getNowShortFormated()}"
 
-def checkCsvFileFolder(cname, lname):
-    if checkFolderEx(lname):
-      print(f'Appending -> {cname}.csv') 
-    else:
-      print("Not a folder!")  
-        
-def checkFolderEx(lname):
-    p = f"{os.getcwd()}/logg/{lname}/"
+def checkFileAndFolder(locname, filename, wtj=0, wtc=0):
+    if not checkFolderEx(locname):
+        print("Not a folder!")
+        exit()            
+    if wtj == 1:
+            print(f'Writing -> {filename}_n.json')
+    if wtc == 1:    
+        print(f'Appending -> {filename}.csv')  
+          
+def checkFolderEx(locname):
+    p = f"{os.getcwd()}/logg/{locname}/"
     if not os.path.exists(p):
         os.mkdir(p)
         print(f"First time run: Made <logg> folder: {p}")
+        makeZipScript(p,locname)
         return True
     else: return True
 
-def writeData(devices, locname, fname, writejson=0, writecsv=0, jcount=0):
+def makeZipScript(loggPath,locname):
+    zipPath = loggPath + "runzip.sh"
+    with open(zipPath, "w") as outfile:
+        outfile.write(f"#bin/bash\n\ncd logg/{locname}\nsudo zip -m -u {locname}_loggfiles.zip *.csv") 
+    os.chmod(zipPath, 0o755)
+    print("First time run: Made runzip.sh script in logg folder.")
+
+def writeRunScript(l,r,s,j,c,n,z):
+    runm = "runme.sh"
+    if exists(runm):
+        os.remove(runm)
+    with open(runm, "w") as outfile:
+        outfile.write(f"#bin/bash\n\nsudo mount -a\nsudo python3 getble.py -l {l} -r {r} -s {s} -j {j} -c {c} -n {n} -z {z}")
+    os.chmod(runm, 0o755)
+
+def writeData(devices, locname, fname, writejson: int, writecsv: int, jcount: int):
     
     devices_m = []
 
@@ -58,10 +73,9 @@ def writeData(devices, locname, fname, writejson=0, writecsv=0, jcount=0):
             if (desc == "Complete Local Name"):
                 name = str(value)
 
-        # add device addr, addType and rssi to devices_m
-        devices_m.append({'time': getNowSQLFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
+        devices_m.append({'location': locname, 'time': getNowSQLFormated(), 'addr': dev.addr, 'rssi': dev.rssi, 'name': name})
 
-    print(f"Scan {jcount}: {len(devices_m)} devices found.")
+    print(f"Scan {jcount}: {len(devices_m)} devices found {formatDateTime(datetime.datetime.now())}")
     json_devices = json.dumps(devices_m)
 
     if writejson > 0:
