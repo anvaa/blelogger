@@ -1,10 +1,8 @@
 import time, datetime
-# import datetime
 import argparse
 from bluepy.btle import DefaultDelegate, Scanner
 import dothejob as dtj
-from runtimesettings import RunTimeSettings
-# import socket
+from rts import RunTimeSettings
 import subprocess
 
 parser = argparse.ArgumentParser()
@@ -28,12 +26,13 @@ rts.RunZipTime = args.z
 rts.ChangeFileNameTime = args.n
 rts.FileName = dtj.genFileName(rts.LocationName)
 
+rts.getset_json(0)
 # print(f"{rts.LocationName} {rts.FileName} {rts.ScanInterval} {rts.RunForMinutes} {rts.WriteToJson} {rts.WriteToCsv}")
 
 count=0
 endTime = dtj.runToTime(rts.RunForMinutes)
 dtj.checkFileAndFolder(rts.LocationName,rts.FileName,rts.WriteToJson,rts.WriteToCsv)
-dtj.writeRunScript(rts.LocationName,rts.RunForMinutes,rts.ScanInterval,rts.WriteToJson,rts.WriteToCsv,rts.CfntMin,rts.ZipTimeMinutes)
+dtj.writeRunScript(rts.LocationName,rts.RunForMinutes,rts.ScanInterval,rts.WriteToJson,rts.WriteToCsv,rts.CfntMin,rts.RztMinutes)
 
 print(" ")
 while endTime > datetime.datetime.now():
@@ -47,14 +46,15 @@ while endTime > datetime.datetime.now():
         if rts.ChangeFileNameTime < datetime.datetime.now():
              rts.FileName = dtj.genFileName(rts.FileName)
              rts.ChangeFileNameTime = args.n
-             
+
         if rts.RunZipTime < datetime.datetime.now():
-            _ = subprocess.run([f"./logg/{rts.LocationName}/runzip.sh",""], shell=True)
-            rts.RunZipTime = args.z
+            if rts.RztMinutes > 0:
+                _ = subprocess.run([f"./logg/{rts.LocationName}/runzip.sh",""], shell=True)
+                rts.RunZipTime = rts.RztMinutes
  
 
     except Exception as ex:
-        print ( "Unexpected error in BLE Scanner: %s" % ex )
+        print ( "Unexpected error in blecanner: %s" % ex )
         exit()
 
-    time.sleep(rts.ScanInterval) # Scaninterval
+    time.sleep(rts.ScanInterval)
