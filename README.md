@@ -13,8 +13,8 @@ optional arguments:
   -n, -ChangeFileNameInMinutes 
   -z, -RunZipOnLoggFiles
 
-    ex: getble.py -l home -r 2 -c 1 
-        #runs for 2 minutes and write to home_<timestamp>.csv
+    ex: getble.py -l rpiw2 -r 2 -c 1 
+        #runs for 2 minutes and write to rpiw2_<timestamp>.csv
 
 Dataoutput ->   time, #datetime as yy-mm-dd hh:mm:ss (sqltime) 
                 addr, #c2:45:56:49:ef:78
